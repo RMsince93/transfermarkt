@@ -1,0 +1,10 @@
+.container.mt-5
+  - if notice
+    .alert.alert-success = notice
+
+  == render partial: "teams/team", locals: { team: @team, season: @season, players: @players, coach: @coach, season_options: @season_options }
+
+  .d-flex.gap-2.mt-3
+    = link_to "Edit team", edit_team_path(@team), class: "btn btn-outline-secondary"
+    = link_to "Back to teams", teams_path, class: "btn btn-outline-primary"
+    = button_to "Destroy team", @team, method: :delete, class: "btn btn-danger", data: { turbo_confirm: "Are you sure?" }

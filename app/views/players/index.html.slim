@@ -1,0 +1,65 @@
+.container.mt-5
+  - if notice
+    .alert.alert-success = notice
+
+  h1.mb-4 Players
+
+  = search_form_for @q, url: players_path, method: :get, html: { class: "row g-3 align-items-end mb-4" }, local: true do |f|
+    .col-md-3
+      = f.label :name_cont, "Search by Name", class: "form-label"
+      = f.text_field :name_cont, class: "form-control", placeholder: "Name contains..."
+    .col-md-2
+      = f.label :age_eq, "Search by Age", class: "form-label"
+      = f.number_field :age_eq, class: "form-control", placeholder: "Age equals"
+    .col-md-3
+      = f.label :country_name_cont, "Search by Country", class: "form-label"
+      = f.text_field :country_name_cont, class: "form-control", placeholder: "Country contains..."
+    .col-md-2
+      = f.label :market_value_eq, "Market Value (€)", class: "form-label"
+      = f.number_field :market_value_eq, class: "form-control", placeholder: "Exact value"
+    .col-md-2
+      = f.label :position_name_cont, "Position", class: "form-label"
+      = f.text_field :position_name_cont, class: "form-control", placeholder: "Position contains..."
+    .col-md-2
+      = label_tag :season_id, "Season", class: "form-label"
+      = select_tag :season_id,
+                   options_for_select(Season.order(start_year: :desc).pluck(:name, :id), @season&.id),
+                   include_blank: "All seasons",
+                   class: "form-select"
+    .col-md-2.d-grid
+      = f.submit "Search", class: "btn btn-primary"
+    .col-md-12.d-flex.gap-2
+      = link_to "Reset", players_path, class: "btn btn-outline-secondary btn-sm"
+      = link_to "Back", root_path, class: "btn btn-outline-primary btn-sm"
+
+  table.table.table-striped#players
+    thead
+      tr
+        th Image
+        th = sort_link(@q, :name, "Name")
+        th = sort_link(@q, :age, "Age")
+        th Team
+        th = sort_link(@q, :country_name, "Country")
+        th = sort_link(@q, :market_value, "Market Value")
+        th = sort_link(@q, :position_name, "Position")
+    tbody
+      - @players.each do |player|
+        - player_team = player_team_for_season(player, @season)
+        tr
+          td = link_to player_avatar_tag(player), player_path(player, season_id: @season&.id)
+          td = link_to player.name, player_path(player, season_id: @season&.id)
+          td = player_age(player) || "—"
+          td = player_team ? link_to(player_team.name, team_path(player_team), class: "btn btn-sm btn-link p-0") : "—"
+          td
+            - if player.country
+              - flag_tag = country_flag_tag(player.country)
+              = flag_tag if flag_tag.present?
+              = player.country.name
+            - else
+              | —
+          td = format_market_value(player.market_value)
+          td = player.position&.name || "—"
+
+  .mt-4.d-flex.flex-wrap.gap-2
+    = link_to "Create Player", new_player_path, class: "btn btn-primary"
+    = link_to "Go Home", root_path, class: "btn btn-outline-primary"

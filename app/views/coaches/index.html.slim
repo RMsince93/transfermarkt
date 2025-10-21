@@ -1,0 +1,11 @@
+p style="color: green" = notice
+
+h1 Coaches
+
+#coaches
+  - @coaches.each do |coach|
+    == render coach
+    p
+      = link_to "Show this coach", coach
+
+= link_to "New coach", new_coach_path

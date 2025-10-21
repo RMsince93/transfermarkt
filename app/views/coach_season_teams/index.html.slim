@@ -1,0 +1,11 @@
+p style="color: green" = notice
+
+h1 Coach season teams
+
+#coach_season_teams
+  - @coach_season_teams.each do |coach_season_team|
+    == render coach_season_team
+    p
+      = link_to "Show this coach season team", coach_season_team
+
+= link_to "New coach season team", new_coach_season_team_path

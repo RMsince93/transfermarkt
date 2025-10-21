@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  city: MyString
+  stadium: MyString
+  squad_size: 1
+  average_age: 1.5
+  market_value_total: 9.99
+  current_coach: MyString
+  logo: MyString
+
+two:
+  name: MyString
+  city: MyString
+  stadium: MyString
+  squad_size: 1
+  average_age: 1.5
+  market_value_total: 9.99
+  current_coach: MyString
+  logo: MyString

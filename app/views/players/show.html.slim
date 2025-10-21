@@ -1,0 +1,94 @@
+.container.mt-5
+  - if notice
+    .alert.alert-success = notice
+
+  .row
+    .col-md-4
+      .card.mb-3.text-center
+        .card-body
+          .mb-3
+            = player_avatar_tag(@player, size: [200, 200])
+          h2.h4 = @player.name
+          - if @player_season_team&.shirt_number
+            p.text-muted = "##{@player_season_team.shirt_number}"
+      .card.mb-3
+        .card-body
+          h5.card-title Market Value
+          p.card-text.fw-bold = format_market_value(@player.market_value)
+
+    .col-md-4
+      .card.mb-3
+        .card-body
+          h5.card-title Player Details
+          ul.list-unstyled.mb-0
+            li
+              strong Age:
+              = " #{player_age(@player) || '—'}"
+            li
+              strong Height:
+              = " #{@player.height.present? ? "#{@player.height} cm" : '—'}"
+            li
+              strong Weight:
+              = " #{@player.weight.present? ? "#{@player.weight} kg" : '—'}"
+            li
+              strong Preferred foot:
+              = " #{@player.preferred_foot.presence || '—'}"
+            li.d-flex.align-items-center
+              strong Country:
+              - if @player.country
+                span.ms-2
+                  - flag_tag = country_flag_tag(@player.country, size: [36, 24])
+                  = flag_tag if flag_tag.present?
+                  = @player.country.name
+              - else
+                span.ms-2 —
+            li
+              strong Position:
+              = " #{@player.position&.name || '—'}"
+
+    .col-md-4
+      .card.mb-3
+        .card-body
+          h5.card-title Current Team
+          - if @player_team
+            - if @player_team.logo.attached?
+              = image_tag url_for(@player_team.logo), class: "img-thumbnail mb-2"
+            - elsif @player_team.logo_url.present?
+              = image_tag asset_path(@player_team.logo_url), class: "img-thumbnail mb-2" rescue @player_team.logo_url
+            h6 = @player_team.name
+          - else
+            p.text-muted No team for this season
+      .card
+        .card-body
+          h5.card-title Season
+          = form_with url: player_path(@player), method: :get, local: true do |form|
+            .input-group
+              = select_tag :season_id,
+                           options_for_select(@season_options.pluck(:name, :id), @season&.id),
+                           include_blank: "All seasons",
+                           class: "form-select"
+              = form.submit "Apply", class: "btn btn-outline-primary"
+
+  .row.mt-4
+    .col
+      h3 Career History
+      - if @player_history.any?
+        table.table.table-striped
+          thead
+            tr
+              th Season
+              th Team
+              th Shirt Number
+          tbody
+            - @player_history.each do |entry|
+              tr
+                td = entry.season&.name || '—'
+                td = entry.team ? link_to(entry.team.name, team_path(entry.team)) : '—'
+                td = entry.shirt_number || '—'
+      - else
+        p.text-muted No career data available.
+
+  .mt-3.d-flex.gap-2
+    = link_to "Back", players_path, class: "btn btn-outline-primary"
+    = link_to "Edit", edit_player_path(@player), class: "btn btn-outline-secondary"
+    = button_to "Destroy", @player, method: :delete, class: "btn btn-danger", data: { turbo_confirm: "Are you sure?" }

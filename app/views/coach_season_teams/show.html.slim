@@ -1,0 +1,10 @@
+p style="color: green" = notice
+
+== render @coach_season_team
+
+div
+  => link_to "Edit this coach season team", edit_coach_season_team_path(@coach_season_team)
+  '|
+  =< link_to "Back to coach season teams", coach_season_teams_path
+
+  = button_to "Destroy this coach season team", @coach_season_team, method: :delete

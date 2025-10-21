@@ -1,0 +1,22 @@
+= form_with(model: coach_season_team) do |form|
+  - if coach_season_team.errors.any?
+    div style="color: red"
+      h2 = "#{pluralize(coach_season_team.errors.count, "error")} prohibited this coach_season_team from being saved:"
+      ul
+        - coach_season_team.errors.each do |error|
+          li = error.full_message
+
+  div
+    = form.label :coach_id, style: "display: block"
+    = form.text_field :coach_id
+
+  div
+    = form.label :team_id, style: "display: block"
+    = form.text_field :team_id
+
+  div
+    = form.label :season_id, style: "display: block"
+    = form.text_field :season_id
+
+  div
+    = form.submit

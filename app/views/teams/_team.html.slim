@@ -1,0 +1,81 @@
+- season = local_assigns[:season]
+- season_options = local_assigns[:season_options] || []
+- players = local_assigns[:players] || team.players_in_season(season)
+- coach = local_assigns[:coach]
+
+.card.mb-4 id=dom_id(team)
+  .card-body
+    .d-flex.justify-content-between.align-items-start.mb-3
+      h2.h4.mb-0 = team.name
+      - if season_options.present?
+        = form_with url: team_path(team), method: :get, local: true do |form|
+          .input-group.input-group-sm style="width: 220px;"
+            = select_tag :season_id,
+                         options_for_select(season_options.map { |s| [s.name, s.id] }, season&.id),
+                         include_blank: "All seasons",
+                         class: "form-select"
+            = form.submit "Apply", class: "btn btn-outline-primary"
+
+    .d-flex.gap-3.align-items-center.mb-3
+      - if team.logo.attached?
+        = image_tag url_for(team.logo), class: "img-thumbnail"
+      - elsif team.logo_url.present?
+        = image_tag asset_path(team.logo_url), class: "img-thumbnail" rescue team.logo_url
+      - else
+        .placeholder.bg-light.text-muted.d-flex.align-items-center.justify-content-center style="width: 120px; height: 120px;"
+          | No logo
+      .flex-grow-1
+        p.mb-1
+          strong City:
+          = " #{team.city.presence || '—'}"
+        p.mb-1
+          strong Stadium:
+          = " #{team.stadium.presence || '—'}"
+        p.mb-0
+          strong Coach:
+          - coach_name = coach&.name || team.current_coach
+          - if coach_name.present?
+            = coach_name
+          - else
+            | —
+
+    - squad_size = players.size
+    - average_age = team.average_age(season: season)
+    - market_value = team.market_value_total(season: season)
+
+    dl.row
+      dt.col-sm-4 Squad size
+      dd.col-sm-8 = squad_size.positive? ? squad_size : "—"
+      dt.col-sm-4 Average age
+      dd.col-sm-8 = average_age.to_f.positive? ? "#{average_age} yrs" : "—"
+      dt.col-sm-4 Market value
+      dd.col-sm-8 = format_market_value(market_value)
+
+    - if players.any?
+      h3.h5.mt-3 Squad
+      table.table.table-striped
+        thead
+          tr
+            th Image
+            th Name
+            th Position
+            th Age
+            th Country
+            th Market Value
+        tbody
+          - players.each do |player|
+            tr
+              td = link_to player_avatar_tag(player, size: [60, 60]), player_path(player, season_id: season&.id)
+              td = link_to player.name, player_path(player, season_id: season&.id)
+              td = player.position&.name || "—"
+              td = player_age(player) || "—"
+              td
+                - if player.country
+                  - flag_tag = country_flag_tag(player.country)
+                  = flag_tag if flag_tag.present?
+                  = player.country.name
+                - else
+                  | —
+              td = format_market_value(player.market_value)
+    - else
+      p.text-muted.mt-3 No players associated with this season.

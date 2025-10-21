@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  country: one
+  birth_date: 2025-07-16
+  height: 1
+  weight: 1
+  position: one
+  market_value: 9.99
+  preferred_foot: MyString
+
+two:
+  name: MyString
+  country: two
+  birth_date: 2025-07-16
+  height: 1
+  weight: 1
+  position: two
+  market_value: 9.99
+  preferred_foot: MyString

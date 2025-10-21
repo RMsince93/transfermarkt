@@ -1,0 +1,38 @@
+= form_with(model: team, html: { multipart: true, class: "row g-3" }) do |form|
+  - if team.errors.any?
+    div style="color: red"
+      h2 = "#{pluralize(team.errors.count, "error")} prohibited this team from being saved:"
+      ul
+        - team.errors.each do |error|
+          li = error.full_message
+
+  .col-md-6
+    = form.label :name, class: "form-label"
+    = form.text_field :name, class: "form-control"
+
+  .col-md-6
+    = form.label :city, class: "form-label"
+    = form.text_field :city, class: "form-control"
+
+  .col-md-6
+    = form.label :stadium, class: "form-label"
+    = form.text_field :stadium, class: "form-control"
+
+  .col-md-6
+    = form.label :current_coach, class: "form-label"
+    = form.text_field :current_coach, class: "form-control"
+
+  .col-md-6
+    = form.label :logo_url, "Logo URL (optional)", class: "form-label"
+    = form.text_field :logo_url, class: "form-control", placeholder: "example: fc_porto.png"
+
+  .col-md-6
+    = form.label :logo, "Upload logo", class: "form-label"
+    = form.file_field :logo, direct_upload: true, class: "form-control"
+    - if team.logo.attached?
+      .mt-2
+        = image_tag url_for(team.logo), class: "img-thumbnail"
+        = link_to "Remove", Rails.application.routes.url_helpers.rails_blob_path(team.logo, only_path: true), data: { turbo_method: :delete, turbo_confirm: "Remove current logo?" }, class: "btn btn-sm btn-outline-danger ms-2"
+
+  .col-12
+    = form.submit class: "btn btn-primary"
